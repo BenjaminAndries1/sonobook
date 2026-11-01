@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#14110f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Luisterboeken">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon.svg">
+<title>Mijn luisterboeken</title>
+<style>
+:root{--bg:#14110f;--panel:#1e1a17;--panel2:#27221e;--text:#f3ece4;--muted:#9d9186;--accent:#e8894a;--line:#342d27;--danger:#ff8a80}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent;min-height:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+button:disabled{opacity:.5;cursor:default}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.danger{color:var(--danger)}
+
+header{position:sticky;top:0;z-index:5;display:flex;gap:12px;align-items:center;padding:calc(12px + env(safe-area-inset-top)) 16px 12px;background:rgba(20,17,15,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header h1{font-size:1.15rem;margin:0;flex:1}
+.btn{padding:10px 16px;border-radius:12px;background:var(--accent);color:#1a1008;font-weight:600}
+.btn.ghost{background:var(--panel2);color:var(--text)}
+.icon{width:42px;height:42px;border-radius:50%;background:var(--panel2);font-size:1.2rem;display:flex;align-items:center;justify-content:center;flex:0 0 42px}
+
+input[type=search],input[type=text],select{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:11px 13px;font:inherit;width:100%}
+main{padding:16px 16px 120px;max-width:1100px;margin:0 auto}
+.section-title{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:24px 0 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.grid2 .row{margin:0}
+
+.card{background:var(--panel);border-radius:14px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;border:1px solid var(--line)}
+.card:active{transform:scale(.98)}
+.cover{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:800;color:#fffc;position:relative;background-size:cover;background-position:center}
+.cover .done{position:absolute;top:8px;right:8px;background:#000b;border-radius:99px;padding:2px 8px;font-size:.7rem;color:#fff}
+.card .info{padding:10px 12px 12px}
+.t{font-weight:600;font-size:.95rem;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.a{color:var(--muted);font-size:.8rem;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar{height:4px;background:var(--line);border-radius:4px;margin:9px 0 6px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--accent)}
+.empty{color:var(--muted);text-align:center;padding:60px 20px;border:2px dashed var(--line);border-radius:16px;line-height:1.5}
+
+.row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;background:var(--panel2);margin-bottom:8px;cursor:pointer}
+.row.on{outline:2px solid var(--accent)}
+.row .grow{flex:1;min-width:0}
+.row small{color:var(--muted)}
+.thumb{width:52px;height:52px;border-radius:10px;flex:0 0 52px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fffc}
+
+.mini{position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:10px 12px;display:flex;align-items:center;gap:12px;z-index:10;box-shadow:0 10px 30px #0008;cursor:pointer}
+.mini-info{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.92rem}
+.mini-btn{width:44px;height:44px;border-radius:50%;background:var(--accent);color:#1a1008;font-size:1.1rem;flex:0 0 44px}
+
+.overlay{position:fixed;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column;padding:calc(10px + env(safe-area-inset-top)) 22px calc(20px + env(safe-area-inset-bottom));overflow-y:auto;max-width:620px;margin:0 auto}
+.pl-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pl-top .small{font-size:.85rem;color:var(--muted);flex:1;text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.pl-cover{width:min(68vw,320px);aspect-ratio:1;margin:18px auto 22px;border-radius:20px;box-shadow:0 20px 50px #0009;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center;font-size:4.5rem;font-weight:800;color:#fffc}
+.pl-meta{text-align:center}
+.pt{font-size:1.35rem;font-weight:700;line-height:1.2}
+.pa{color:var(--muted);margin-top:4px}
+.pc{color:var(--accent);margin-top:12px;font-size:.95rem;min-height:1.3em;cursor:pointer}
+.scrub{margin:24px 0 6px}
+.scrub input{width:100%;accent-color:var(--accent);height:28px}
+.times{display:flex;justify-content:space-between;font-variant-numeric:tabular-nums;color:var(--muted);font-size:.85rem}
+.controls{display:flex;justify-content:center;align-items:center;gap:20px;margin:16px 0 26px}
+.round{width:56px;height:56px;border-radius:50%;background:var(--panel2);font-size:.9rem;font-weight:600;flex:0 0 56px}
+.play{width:80px;height:80px;border-radius:50%;background:var(--accent);color:#1a1008;font-size:1.9rem;flex:0 0 80px}
+.tools{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tool{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 10px;font-size:.92rem;text-align:center;width:100%}
+.tool.active{border-color:var(--accent);color:var(--accent)}
+select.tool{appearance:none;-webkit-appearance:none;text-align:center;color:var(--text)}
+select.tool option{background:var(--panel)}
+
+.sheet-bg{position:fixed;inset:0;background:#000a;z-index:30;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--panel);width:100%;max-width:560px;max-height:84vh;border-radius:22px 22px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));overflow-y:auto}
+.sheet h2{margin:0 0 14px;font-size:1.1rem}
+.opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.field{display:block;margin-bottom:12px;color:var(--muted);font-size:.9rem}
+.field input{margin-top:6px;color:var(--text)}
+.drop{border:2px dashed var(--line);border-radius:16px;padding:18px;text-align:center;color:var(--muted);margin-top:4px}
+.drop.over{border-color:var(--accent);color:var(--text)}
+
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translateX(-50%);background:#000e;padding:10px 18px;border-radius:99px;z-index:50;font-size:.9rem;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎧 Mijn luisterboeken</h1>
+  <button class="btn" id="uploadBtn">+ Downloaden</button>
+</header>
+
+<main>
+  <input type="search" id="search" placeholder="Zoek op titel of auteur…">
+
+  <div id="continueWrap" class="hidden">
+    <div class="section-title">Verder luisteren</div>
+    <div id="continueList" class="grid2"></div>
+  </div>
+
+  <div class="section-title">Op dit toestel</div>
+  <div id="grid" class="grid"></div>
+  <div id="empty" class="empty hidden">
+    Nog geen boeken op dit toestel.<br>Tik op <b>+ Downloaden</b> en kies je audiobestanden.<br>
+    <span style="font-size:.85rem">Eenmaal gedownload werkt een boek ook zonder internet.</span>
+  </div>
+</main>
+
+<div id="mini" class="mini hidden">
+  <div class="mini-info" id="miniInfo"></div>
+  <button class="mini-btn" id="miniPlay">▶</button>
+</div>
+
+<section id="player" class="overlay hidden">
+  <div class="pl-top">
+    <button class="icon" id="closePlayer" title="Terug">⌄</button>
+    <div class="small" id="pTitleSmall"></div>
+    <button class="icon" id="moreBtn" title="Meer">⋯</button>
+  </div>
+
+  <div class="pl-cover" id="pCover"></div>
+
+  <div class="pl-meta">
+    <div class="pt" id="pTitle"></div>
+    <div class="pa" id="pAuthor"></div>
+    <div class="pc" id="pChapter"></div>
+  </div>
+
+  <div class="scrub">
+    <input type="range" id="seek" min="0" max="1" value="0" step="1">
+    <div class="times"><span id="tNow">0:00</span><span id="tLeft">-0:00</span></div>
+  </div>
+
+  <div class="controls">
+    <button class="round" id="back30">−30</button>
+    <button class="round" id="prevCh" title="Vorig hoofdstuk">⏮</button>
+    <button class="play" id="playBtn">▶</button>
+    <button class="round" id="nextCh" title="Volgend hoofdstuk">⏭</button>
+    <button class="round" id="fwd30">+30</button>
+  </div>
+
+  <div class="tools">
+    <select id="speed" class="tool" title="Snelheid"></select>
+    <button class="tool" id="sleepBtn">🌙 Slaaptimer</button>
+    <button class="tool" id="chapBtn">☰ Hoofdstukken</button>
+    <button class="tool" id="markBtn">🔖 Bladwijzer zetten</button>
+    <button class="tool" id="bmListBtn">📑 Bladwijzers</button>
+  </div>
+</section>
+
+<div id="sheetBg" class="sheet-bg hidden"><div class="sheet" id="sheet"></div></div>
+<div id="toast" class="toast"></div>
+<input type="file" id="fileInput" multiple accept="audio/*,.m4b,.opus,.flac,.json,image/*" hidden>
+<audio id="audio" preload="metadata"></audio>
+
+<script src="app.js"></script>
+</body>
+</html>
